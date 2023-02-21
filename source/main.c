@@ -7,6 +7,9 @@
 
 
 int main(){
+    //init();
+    //stateWait();
+    
     elevio_init();
     
     printf("=== Example Program ===\n");
