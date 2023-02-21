@@ -12,6 +12,27 @@ int main(){
     
     elevio_init();
     
+    init();
+
+    while(1){
+        switch (glob_state)
+        {
+        case FSM::doorOpen:
+        doorOpen();
+        
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
     printf("=== Example Program ===\n");
     printf("Press the stop button on the elevator panel to exit\n");
 
