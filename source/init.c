@@ -13,4 +13,5 @@ void init(){
     elevio_motorDirection(glob_MotorDirection);
     glob_State = FSM_wait;
     glob_ElevatorStateNormal = 1;
+    return;
 }
