@@ -46,7 +46,6 @@ void STATE_doorOpen(){
 }
 
 void STATE_stop(){
-    //må vi ikke stoppe motoren her?
     elevio_stopLamp(1);
     matrix();
     if(elevio_floorSensor() != -1){

@@ -1,6 +1,7 @@
 #include "orderHandler.h"
 #include <string.h>
 
+//må sjekke om vi skal stoppe
 
 void matrix(){
     //first we check for stop btn
@@ -10,6 +11,10 @@ void matrix(){
     }
 
     updateMatrixAndLights();
+    if (glob_State == FSM_move && elevio_floorSensor() != -1){
+        checkIfShallStop();
+    }
+    return;
 }
 
 //in case Stopp button is pressed
@@ -21,6 +26,7 @@ void stopBtnPressed(void){
             elevio_buttonLamp(f, b, 0);
         }
     }
+    return;
 }
 
 //then we update lights and matrix
@@ -34,9 +40,13 @@ void updateMatrixAndLights(void){
             }
         }
     }
+
+    //If transition from one to another direction it loops through all this twice. Cant loope in code in case of no que
     if(glob_State == FSM_wait){
         updateDirection();
+        glob_MotorDirection = glob_QueDirection;
     }
+    return;
 }
 
 void orderServed(void){
@@ -44,46 +54,75 @@ void orderServed(void){
         elevMatrix[elevio_floorSensor()][buttons] = 0;
         elevio_buttonLamp(elevio_floorSensor(), buttons, 0);
     }
+    return;
 }
 
 void updateDirection(){
 
-    if (glob_MotorDirection == DIRN_STOP){
+    if (glob_QueDirection == DIRN_STOP){
         for (int floor = 0; floor < N_FLOORS; floor++){
             for (int button = 0; button < N_BUTTONS; button++)
             {
                 if (elevMatrix[floor][button] == 1){
                     if (floor > elevio_floorSensor()){
-                        glob_MotorDirection = DIRN_UP;
+                        glob_QueDirection = DIRN_UP;
                     }
                     else{
-                        glob_MotorDirection = DIRN_DOWN;
+                        glob_QueDirection = DIRN_DOWN;
                     }
                 }
             }
         }
     }
 
-    else if (glob_State == STATE_wait && glob_MotorDirection == DIRN_UP){
-        glob_MotorDirection = DIRN_STOP;
+    else if (glob_State == STATE_wait && glob_QueDirection == DIRN_UP){
+        glob_QueDirection = DIRN_STOP;
         for (int f = elevio_floorSensor(); f < N_FLOORS; f++){
             for (int b = 0; b < N_BUTTONS; b++){
                 if (elevMatrix[f][b] != 0){
-                    glob_MotorDirection = DIRN_UP;
-                }
-            }
-            
-            }
-    }
-
-    else if (glob_State == STATE_wait && glob_MotorDirection == DIRN_DOWN){
-        glob_MotorDirection = DIRN_STOP;
-        for (int f = elevio_floorSensor(); f >= 0; f--){
-            for (int b = 0; b < N_BUTTONS; b++){
-                if (elevMatrix[f][b] != 0){
-                    glob_MotorDirection = DIRN_DOWN;
+                    glob_QueDirection = DIRN_UP;
                 }
             }
         }
+    }
+
+    else if (glob_State == STATE_wait && glob_QueDirection == DIRN_DOWN){
+        glob_QueDirection = DIRN_STOP;
+        for (int f = elevio_floorSensor(); f >= 0; f--){
+            for (int b = 0; b < N_BUTTONS; b++){
+                if (elevMatrix[f][b] != 0){
+                    glob_QueDirection = DIRN_DOWN;
+                }
+            }
+        }
+    }
+    return;
+}
+
+
+// function to see if we shall pick up anybody on the floor
+void checkIfShallStop(void){
+    int currentFloor = elevio_floorSensor();
+    if(elevMatrix[currentFloor][0]){
+        glob_MotorDirection = DIRN_STOP;
+        return;
+    }
+    else if (glob_QueDirection == 1 && elevMatrix[currentFloor][1]){
+        glob_MotorDirection = DIRN_STOP;
+        return;
+    }
+    else if (glob_QueDirection == -1 && elevMatrix[currentFloor][2]){
+        glob_MotorDirection = DIRN_STOP;
+        return;
+    }
+    return;
+}
+
+void printMatrix(void){
+    for (int floors  = 0; floors < N_FLOORS; floors++){
+        for (int buttons=0; buttons < N_BUTTONS; buttons++){
+            printf(elevMatrix[floors][buttons]);
+        }
+    printf("\n");
     }
 }

@@ -12,6 +12,8 @@ void init(){
     glob_MotorDirection = DIRN_STOP;
     elevio_motorDirection(glob_MotorDirection);
     glob_State = FSM_wait;
+    glob_QueDirection = DIRN_STOP;
     glob_ElevatorStateNormal = 1;
+    memset(elevMatrix, 0, sizeof(elevMatrix)); //initializing elevMatrix for que
     return;
 }
