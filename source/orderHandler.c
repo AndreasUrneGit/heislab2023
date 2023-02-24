@@ -104,7 +104,7 @@ void updateDirection(){
 // function to see if we shall pick up anybody on the floor
 void checkIfShallStop(void){
     int currentFloor = elevio_floorSensor();
-    if(elevMatrix[currentFloor][0]){
+    if(elevMatrix[currentFloor][2]){
         glob_MotorDirection = DIRN_STOP;
         return;
     }
@@ -112,7 +112,7 @@ void checkIfShallStop(void){
         glob_MotorDirection = DIRN_STOP;
         return;
     }
-    else if (glob_QueDirection == -1 && elevMatrix[currentFloor][2]){
+    else if (glob_QueDirection == -1 && elevMatrix[currentFloor][0]){
         glob_MotorDirection = DIRN_STOP;
         return;
     }

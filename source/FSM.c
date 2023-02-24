@@ -83,13 +83,13 @@ void STATE_stop(void){
 
 void testStart(void){
     printf("Går inn i tilstand: %d ", glob_State);
-    printf('\n');
+    printf("\n");
     printMatrix();
 }
 
 void testSlutt(void){
-    printf('\n');
+    printf("\n");
     printf("Går ut av tilstand: %d", glob_State);
-    printf('\n');
+    printf("\n");
     printMatrix();
 }
