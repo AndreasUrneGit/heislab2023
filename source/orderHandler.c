@@ -41,7 +41,7 @@ void updateMatrixAndLights(void){
         }
     }
 
-    //If transition from one to another direction it loops through all this twice. Cant loope in code in case of no que
+    //If transition from one to another direction it loops through all this twice. Cant loop in code in case of no que
     if(glob_State == FSM_wait){
         updateDirection();
         glob_MotorDirection = glob_QueDirection;
@@ -58,7 +58,6 @@ void orderServed(void){
 }
 
 void updateDirection(){
-
     if (glob_QueDirection == DIRN_STOP){
         for (int floor = 0; floor < N_FLOORS; floor++){
             for (int button = 0; button < N_BUTTONS; button++)
@@ -75,7 +74,7 @@ void updateDirection(){
         }
     }
 
-    else if (glob_State == STATE_wait && glob_QueDirection == DIRN_UP){
+    else if (glob_State == FSM_wait && glob_QueDirection == DIRN_UP){
         glob_QueDirection = DIRN_STOP;
         for (int f = elevio_floorSensor(); f < N_FLOORS; f++){
             for (int b = 0; b < N_BUTTONS; b++){
@@ -86,7 +85,7 @@ void updateDirection(){
         }
     }
 
-    else if (glob_State == STATE_wait && glob_QueDirection == DIRN_DOWN){
+    else if (glob_State == FSM_wait && glob_QueDirection == DIRN_DOWN){
         glob_QueDirection = DIRN_STOP;
         for (int f = elevio_floorSensor(); f >= 0; f--){
             for (int b = 0; b < N_BUTTONS; b++){
@@ -119,9 +118,9 @@ void checkIfShallStop(void){
 }
 
 void printMatrix(void){
-    for (int floors  = 0; floors < N_FLOORS; floors++){
-        for (int buttons=0; buttons < N_BUTTONS; buttons++){
-            printf(elevMatrix[floors][buttons]);
+    for (int floor  = 0; floor < N_FLOORS; floor++){
+        for (int button = 0; button < N_BUTTONS; button++){
+            printf("%d", elevMatrix[floor][button]);
         }
     printf("\n");
     }

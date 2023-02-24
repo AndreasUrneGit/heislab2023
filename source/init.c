@@ -3,17 +3,28 @@
 void init(){
     glob_ElevatorStateNormal = 0;
     glob_MotorDirection = DIRN_DOWN;
+
+    for(int floor = 0; floor < N_FLOORS; floor++){
+        for(int button = 0; button < N_BUTTONS; button++){
+            elevMatrix[floor][button] = 0;
+        }
+    }
+
     elevio_floorIndicator(0); // We don´t want floor indication before known state
     elevio_doorOpenLamp(0); // Simulates closing of door
+    time_t start = time(NULL);
+    while(time(NULL) - start < 3){ // Wait for door to close
+
+    }
     elevio_motorDirection(glob_MotorDirection);
     while(elevio_floorSensor() == -1){
 
     }
     glob_MotorDirection = DIRN_STOP;
     elevio_motorDirection(glob_MotorDirection);
+    elevio_floorIndicator(elevio_floorSensor()); // Set correct floor light
     glob_State = FSM_wait;
     glob_QueDirection = DIRN_STOP;
     glob_ElevatorStateNormal = 1;
-    memset(elevMatrix, 0, sizeof(elevMatrix)); //initializing elevMatrix for que
     return;
 }

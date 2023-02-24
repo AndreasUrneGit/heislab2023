@@ -1,7 +1,8 @@
 #pragma once
+#include <time.h>
+#include <printf.h>
 
 #include "driver/elevio.h"
-#include "orderHandler.h"
 
 typedef enum { 
     FSM_wait,
@@ -12,7 +13,9 @@ typedef enum {
 
 int glob_ElevatorStateNormal; //0 during init, 1 else
 FSM glob_State;
-MotorDirection glob_MotorDirection; //Current direction for elvio motor
-MotorDirection glob_QueDirection; //direction on elvio
+MotorDirection glob_MotorDirection; // Current direction for elevator motor
+MotorDirection glob_QueDirection; // 
+
+int elevMatrix[N_FLOORS][N_BUTTONS];
 
 void init();
