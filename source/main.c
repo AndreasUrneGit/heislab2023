@@ -13,6 +13,8 @@ int main(){
     
     init(); // Get to known state
 
+    printMatrix();
+
     while(1){
 
         switch (glob_State){

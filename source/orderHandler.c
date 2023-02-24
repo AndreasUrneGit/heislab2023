@@ -17,9 +17,9 @@ void matrix(){
     return;
 }
 
-//in case Stopp button is pressed
+//in case stop button is pressed
 void stopBtnPressed(void){
-    glob_State = FSM_stop;
+    //glob_State = FSM_stop;
     memset(elevMatrix, 0, sizeof(elevMatrix)); //clear matrix to 0
     for(int f = 0; f < N_FLOORS; f++){ //setting all lights to 0
         for(int b = 0; b < N_BUTTONS; b++){

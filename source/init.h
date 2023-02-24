@@ -11,11 +11,11 @@ typedef enum {
     FSM_stop
 } FSM;
 
-int glob_ElevatorStateNormal; //0 during init, 1 else
-FSM glob_State;
-MotorDirection glob_MotorDirection; // Current direction for elevator motor
-MotorDirection glob_QueDirection; // 
+volatile int glob_ElevatorStateNormal; //0 during init, 1 else
+volatile FSM glob_State;
+volatile MotorDirection glob_MotorDirection; // Current direction for elevator motor
+volatile MotorDirection glob_QueDirection; // 
 
-int elevMatrix[N_FLOORS][N_BUTTONS];
+volatile int elevMatrix[N_FLOORS][N_BUTTONS];
 
 void init();
