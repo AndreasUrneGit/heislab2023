@@ -8,3 +8,6 @@ void STATE_wait(void);
 void STATE_move(void);
 void STATE_doorOpen(void);
 void STATE_stop(void);
+
+void testStart(void);
+void testSlutt(void);
