@@ -39,8 +39,13 @@ void updateMatrixAndLights(void){
             }
         }
     }
+    //assumption that elevio_floorIndicator takes argument of only the floor indicator to light up and doesnt need to set last used floor light to 0
+    int currentFloor = elevio_floorSensor();
+    if(currentFloor!= -1){
+        elevio_floorIndicator(currentFloor);
+    }
 
-    //If transition from one to another direction it loops through all this twice. Cant loop in code in case of no que
+    //update of elevator direction after orders are served
     if(glob_State == FSM_wait){
         updateDirection();
         glob_MotorDirection = glob_QueDirection;
