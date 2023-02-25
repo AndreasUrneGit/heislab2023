@@ -52,17 +52,21 @@ void orderServed(void){
     for (int buttons = 0; buttons < N_BUTTONS; buttons++){
         elevMatrix[elevio_floorSensor()][buttons] = 0;
         elevio_buttonLamp(elevio_floorSensor(), buttons, 0);
+        glob_priOrder = 0;
     }
     return;
 }
 
 void updateDirection(){
+    int currentFloor = elevio_floorSensor();
     if (glob_QueDirection == DIRN_STOP){
         for (int floor = 0; floor < N_FLOORS; floor++){
             for (int button = 0; button < N_BUTTONS; button++)
             {
                 if (elevMatrix[floor][button] == 1){
-                    if (floor > elevio_floorSensor()){
+                    glob_priOrder = 1;
+                    glob_priOrderFloor = floor;
+                    if (floor > currentFloor){
                         glob_QueDirection = DIRN_UP;
                     }
                     else{
@@ -73,27 +77,37 @@ void updateDirection(){
             }
         }
     }
-
+    //check top down first if that it current direction
     else if (glob_State == FSM_wait && glob_QueDirection == DIRN_UP){
         glob_QueDirection = DIRN_STOP;
-        for (int f = elevio_floorSensor(); f < N_FLOORS; f++){
+        for (int f = N_FLOORS; f >= 0; --f){
             for (int b = 0; b < N_BUTTONS; b++){
                 if (elevMatrix[f][b] != 0){
-                    glob_QueDirection = DIRN_UP;
-                }
-                return;
+                    if(f > currentFloor){
+                        glob_QueDirection = DIRN_UP;
+                    }
+                    else if (f < currentFloor){
+                        glob_QueDirection = DIRN_DOWN;
+                    }
+                    return;
+                }  
             }
         }
     }
-
+    //check botom up if that is current direction
     else if (glob_State == FSM_wait && glob_QueDirection == DIRN_DOWN){
         glob_QueDirection = DIRN_STOP;
-        for (int f = elevio_floorSensor(); f >= 0; f--){
+        for (int f = 0; f < N_FLOORS; f++){
             for (int b = 0; b < N_BUTTONS; b++){
                 if (elevMatrix[f][b] != 0){
-                    glob_QueDirection = DIRN_DOWN;
+                    if(f > currentFloor){
+                        glob_QueDirection = DIRN_UP;
+                    }
+                    else if (f < currentFloor){
+                        glob_QueDirection = DIRN_DOWN;
+                    }
+                    return;
                 }
-                return;
             }
         }
     }
@@ -108,11 +122,12 @@ void checkIfShallStop(void){
         glob_MotorDirection = DIRN_STOP;
         return;
     }
-    else if (glob_QueDirection == 1 && elevMatrix[currentFloor][1]){
+    //last or argument is ment to catch when a pri order wishes to go oposit direction of current direction
+    else if ((glob_QueDirection == 1 && elevMatrix[currentFloor][0]) | (glob_priOrder && currentFloor == glob_priOrderFloor)){
         glob_MotorDirection = DIRN_STOP;
         return;
     }
-    else if (glob_QueDirection == -1 && elevMatrix[currentFloor][0]){
+    else if (glob_QueDirection == -1 && elevMatrix[currentFloor][1] | (glob_priOrder && currentFloor == glob_priOrderFloor)){
         glob_MotorDirection = DIRN_STOP;
         return;
     }
