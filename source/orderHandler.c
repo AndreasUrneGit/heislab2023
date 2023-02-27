@@ -58,19 +58,21 @@ void orderServed(void){
     for (int buttons = 0; buttons < N_BUTTONS; buttons++){
         elevMatrix[elevio_floorSensor()][buttons] = 0;
         elevio_buttonLamp(elevio_floorSensor(), buttons, 0);
-        glob_priOrder = 0;
     }
     return;
 }
 
 void updateDirection(){
-    if (glob_QueDirection == DIRN_STOP){
+    if (glob_QueDirection == DIRN_UP && !checkOrderOver()){
+        glob_QueDirection = DIRN_STOP;
+    }
+    else if (glob_QueDirection == DIRN_DOWN && !checkOrderUnder()){
+        glob_QueDirection = DIRN_STOP;
+    }
+    if (glob_QueDirection = DIRN_STOP){
         for (int floor = 0; floor < N_FLOORS; floor++){
-            for (int button = 0; button < N_BUTTONS; button++)
-            {
+            for (int button = 0; button < N_BUTTONS; button++){
                 if (elevMatrix[floor][button] == 1){
-                    glob_priOrder = 1;
-                    glob_priOrderFloor = floor;
                     if (floor > glob_LastFloor){
                         glob_QueDirection = DIRN_UP;
                     }
@@ -82,43 +84,60 @@ void updateDirection(){
             }
         }
     }
-    //check top down first if that it current direction
-    else if (glob_State == FSM_wait && glob_QueDirection == DIRN_UP){
-        glob_QueDirection = DIRN_STOP;
-        for (int f = N_FLOORS; f >= 0; f--){
-            for (int b = 0; b < N_BUTTONS; b++){
-                if (elevMatrix[f][b] != 0){
-                    if(f > glob_LastFloor){
-                        glob_QueDirection = DIRN_UP;
-                    }
-                    else if (f < glob_LastFloor){
-                        glob_QueDirection = DIRN_DOWN;
-                    }
-                    return;
-                }  
-            }
-        }
-    }
-    //check botom up if that is current direction
-    else if (glob_State == FSM_wait && glob_QueDirection == DIRN_DOWN){
-        glob_QueDirection = DIRN_STOP;
-        for (int f = 0; f < N_FLOORS; f++){
-            for (int b = 0; b < N_BUTTONS; b++){
-                if (elevMatrix[f][b] != 0){
-                    if(f > glob_LastFloor){
-                        glob_QueDirection = DIRN_UP;
-                    }
-                    else if (f < glob_LastFloor){
-                        glob_QueDirection = DIRN_DOWN;
-                    }
-                    return;
-                }
-            }
-        }
-    }
-    return;
 }
-
+    // if (glob_QueDirection == DIRN_STOP){
+    //     for (int floor = 0; floor < N_FLOORS; floor++){
+    //         for (int button = 0; button < N_BUTTONS; button++)
+    //         {
+    //             if (elevMatrix[floor][button] == 1){
+    //                 glob_priOrder = 1;
+    //                 glob_priOrderFloor = floor;
+    //                 if (floor > glob_LastFloor){
+    //                     glob_QueDirection = DIRN_UP;
+    //                 }
+    //                 else{
+    //                     glob_QueDirection = DIRN_DOWN;
+    //                 }
+    //                 return;
+    //             }
+    //         }
+    //     }
+    // }
+    // //check top down first if that it current direction
+    // else if (glob_State == FSM_wait && glob_QueDirection == DIRN_UP){
+    //     glob_QueDirection = DIRN_STOP;
+    //     for (int f = N_FLOORS; f >= 0; f--){
+    //         for (int b = 0; b < N_BUTTONS; b++){
+    //             if (elevMatrix[f][b] != 0){
+    //                 if(f > glob_LastFloor){
+    //                     glob_QueDirection = DIRN_UP;
+    //                 }
+    //                 else if (f < glob_LastFloor){
+    //                     glob_QueDirection = DIRN_DOWN;
+    //                 }
+    //                 return;
+    //             }  
+    //         }
+    //     }
+    // }
+    // //check botom up if that is current direction
+    // else if (glob_State == FSM_wait && glob_QueDirection == DIRN_DOWN){
+    //     glob_QueDirection = DIRN_STOP;
+    //     for (int f = 0; f < N_FLOORS; f++){
+    //         for (int b = 0; b < N_BUTTONS; b++){
+    //             if (elevMatrix[f][b] != 0){
+    //                 if(f > glob_LastFloor){
+    //                     glob_QueDirection = DIRN_UP;
+    //                 }
+    //                 else if (f < glob_LastFloor){
+    //                     glob_QueDirection = DIRN_DOWN;
+    //                 }
+    //                 return;
+    //             }
+    //         }
+    //     }
+    // }
+    // return;
 
 // function to see if we shall pick up anybody on the floor
 void checkIfShallStop(void){
@@ -128,11 +147,11 @@ void checkIfShallStop(void){
         return;
     }
     //last or argument is ment to catch when a pri order wishes to go oposit direction of current direction
-    else if ((glob_QueDirection == 1 && elevMatrix[currentFloor][0]) | (glob_priOrder && currentFloor == glob_priOrderFloor)){
+    else if ((glob_QueDirection == 1 && elevMatrix[currentFloor][0]) | !checkOrderOver()){
         glob_MotorDirection = DIRN_STOP;
         return;
     }
-    else if (glob_QueDirection == -1 && elevMatrix[currentFloor][1] | (glob_priOrder && currentFloor == glob_priOrderFloor)){
+    else if (glob_QueDirection == -1 && elevMatrix[currentFloor][1] | !checkOrderUnder()){
         glob_MotorDirection = DIRN_STOP;
         return;
     }
@@ -146,4 +165,27 @@ void printMatrix(void){
         }
     printf("\n");
     }
+}
+
+int checkOrderUnder(void){
+    for (int f = 0; f < glob_LastFloor; f++)
+    {
+        for (int b = 0; b < N_BUTTONS; b++){
+            if(elevMatrix[f][b] == 1){
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+int checkOrderOver(void){
+    for (int f = glob_LastFloor; f < glob_LastFloor; f++)
+    {
+        for (int b = 0; b < N_BUTTONS; b++){
+            if(elevMatrix[f][b] == 1){
+                return 1;
+            }
+        }
+    }
+    return 0;
 }
