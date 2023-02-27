@@ -42,6 +42,7 @@ void updateMatrixAndLights(void){
     //assumption that elevio_floorIndicator takes argument of only the floor indicator to light up and doesnt need to set last used floor light to 0
     int currentFloor = elevio_floorSensor();
     if(currentFloor!= -1){
+        glob_LastFloor = currentFloor;
         elevio_floorIndicator(currentFloor);
     }
 
@@ -63,7 +64,6 @@ void orderServed(void){
 }
 
 void updateDirection(){
-    int currentFloor = elevio_floorSensor();
     if (glob_QueDirection == DIRN_STOP){
         for (int floor = 0; floor < N_FLOORS; floor++){
             for (int button = 0; button < N_BUTTONS; button++)
@@ -71,7 +71,7 @@ void updateDirection(){
                 if (elevMatrix[floor][button] == 1){
                     glob_priOrder = 1;
                     glob_priOrderFloor = floor;
-                    if (floor > currentFloor){
+                    if (floor > glob_LastFloor){
                         glob_QueDirection = DIRN_UP;
                     }
                     else{
@@ -85,13 +85,13 @@ void updateDirection(){
     //check top down first if that it current direction
     else if (glob_State == FSM_wait && glob_QueDirection == DIRN_UP){
         glob_QueDirection = DIRN_STOP;
-        for (int f = N_FLOORS; f >= 0; --f){
+        for (int f = N_FLOORS; f >= 0; f--){
             for (int b = 0; b < N_BUTTONS; b++){
                 if (elevMatrix[f][b] != 0){
-                    if(f > currentFloor){
+                    if(f > glob_LastFloor){
                         glob_QueDirection = DIRN_UP;
                     }
-                    else if (f < currentFloor){
+                    else if (f < glob_LastFloor){
                         glob_QueDirection = DIRN_DOWN;
                     }
                     return;
@@ -105,10 +105,10 @@ void updateDirection(){
         for (int f = 0; f < N_FLOORS; f++){
             for (int b = 0; b < N_BUTTONS; b++){
                 if (elevMatrix[f][b] != 0){
-                    if(f > currentFloor){
+                    if(f > glob_LastFloor){
                         glob_QueDirection = DIRN_UP;
                     }
-                    else if (f < currentFloor){
+                    else if (f < glob_LastFloor){
                         glob_QueDirection = DIRN_DOWN;
                     }
                     return;
