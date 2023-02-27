@@ -24,7 +24,8 @@ void init(){
 
     glob_MotorDirection = DIRN_STOP;
     elevio_motorDirection(glob_MotorDirection);
-    elevio_floorIndicator(elevio_floorSensor()); // Set correct floor light
+    glob_LastFloor = elevio_floorSensor();
+    elevio_floorIndicator(glob_LastFloor); // Set correct floor light
     glob_State = FSM_wait;
     glob_QueDirection = DIRN_STOP;
     glob_ElevatorStateNormal = 1; // Init complete :)

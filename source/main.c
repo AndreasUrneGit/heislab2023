@@ -5,7 +5,6 @@
 #include "driver/elevio.h"
 
 #include "FSM.h"
-#include "init.h"
 
 int main(){
     
