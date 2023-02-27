@@ -32,6 +32,9 @@ void stopBtnPressed(void){
 void updateMatrixAndLights(void){
     for(int f = 0; f < N_FLOORS; f++){
         for(int b = 0; b < N_BUTTONS; b++){
+            if((f == 0 && b == 1) || (f == (N_FLOORS-1) && b == 0)){
+                continue;
+            }
             int btnPressed = elevio_callButton(f, b);
             if (btnPressed){ //only updating when button pressed
                 elevio_buttonLamp(f, b, btnPressed);
@@ -69,7 +72,7 @@ void updateDirection(){
     else if (glob_QueDirection == DIRN_DOWN && !checkOrderUnder()){
         glob_QueDirection = DIRN_STOP;
     }
-    if (glob_QueDirection = DIRN_STOP){
+    if (glob_QueDirection == DIRN_STOP){
         for (int floor = 0; floor < N_FLOORS; floor++){
             for (int button = 0; button < N_BUTTONS; button++){
                 if (elevMatrix[floor][button] == 1){
@@ -147,11 +150,11 @@ void checkIfShallStop(void){
         return;
     }
     //last or argument is ment to catch when a pri order wishes to go oposit direction of current direction
-    else if ((glob_QueDirection == 1 && elevMatrix[currentFloor][0]) | !checkOrderOver()){
+    else if ((glob_QueDirection == 1 && elevMatrix[currentFloor][0]) || !checkOrderOver()){
         glob_MotorDirection = DIRN_STOP;
         return;
     }
-    else if (glob_QueDirection == -1 && elevMatrix[currentFloor][1] | !checkOrderUnder()){
+    else if ((glob_QueDirection == -1 && elevMatrix[currentFloor][1]) || !checkOrderUnder()){
         glob_MotorDirection = DIRN_STOP;
         return;
     }
