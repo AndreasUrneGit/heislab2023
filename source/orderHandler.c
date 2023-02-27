@@ -41,7 +41,7 @@ void updateMatrixAndLights(void){
     }
     //assumption that elevio_floorIndicator takes argument of only the floor indicator to light up and doesnt need to set last used floor light to 0
     int currentFloor = elevio_floorSensor();
-    if(currentFloor!= -1){
+    if(currentFloor != -1){
         glob_LastFloor = currentFloor;
         elevio_floorIndicator(currentFloor);
     }
