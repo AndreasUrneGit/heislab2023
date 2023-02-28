@@ -25,9 +25,11 @@ void matrix(){
 
 //in case stop button is pressed
 void stopBtnPressed(void){
-    memset(elevMatrix, 0, sizeof(elevMatrix)); //clear matrix to 0
+    glob_MotorDirection = DIRN_STOP;
+    glob_QueDirection = DIRN_STOP;
     for(int f = 0; f < N_FLOORS; f++){ //setting all lights to 0
         for(int b = 0; b < N_BUTTONS; b++){
+            elevMatrix[f][b] = 0; //clear matrix to 0
             elevio_buttonLamp(f, b, 0);
         }
     }
@@ -132,9 +134,12 @@ void printMatrix(void){
 }
 
 void orderServed(void){
+    int currentFloor = elevio_floorSensor();
     for (int buttons = 0; buttons < N_BUTTONS; buttons++){
-        elevMatrix[elevio_floorSensor()][buttons] = 0;
-        elevio_buttonLamp(elevio_floorSensor(), buttons, 0);
+        if (currentFloor != -1){
+            elevMatrix[currentFloor][buttons] = 0;
+            elevio_buttonLamp(currentFloor, buttons, 0);
+        }
     }
     return;
 }
