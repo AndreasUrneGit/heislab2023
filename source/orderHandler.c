@@ -5,7 +5,7 @@
 
 void matrix(){
     //first we check for stop btn
-    if (elevio_stopButton()){
+    if (glob_State == FSM_stop){
         stopBtnPressed();
         return;
     }
@@ -26,7 +26,7 @@ void matrix(){
 //in case stop button is pressed
 void stopBtnPressed(void){
     glob_MotorDirection = DIRN_STOP;
-    glob_QueDirection = DIRN_STOP;
+    //glob_QueDirection = DIRN_STOP;
     for(int f = 0; f < N_FLOORS; f++){ //setting all lights to 0
         for(int b = 0; b < N_BUTTONS; b++){
             elevMatrix[f][b] = 0; //clear matrix to 0
@@ -60,7 +60,12 @@ void updateMatrixAndLights(void){
 }
 
 void updateDirection(){
-    if (glob_QueDirection == DIRN_UP && !checkOrderOver()){
+    int currentFloor = elevio_floorSensor();
+    if (currentFloor == -1){
+        betweenFloors(currentFloor);
+        return;
+    }
+    else if (glob_QueDirection == DIRN_UP && !checkOrderOver()){
         glob_QueDirection = DIRN_STOP;
     }
     else if (glob_QueDirection == DIRN_DOWN && !checkOrderUnder()){
@@ -83,6 +88,33 @@ void updateDirection(){
     }
     return;
 }
+
+void betweenFloors(int currentFloor){
+    for (int f = 0; f < N_FLOORS; f++){
+        for (int b = 0; b < N_BUTTONS; b++){
+            if (elevMatrix[f][b] == 1){
+                if (f > glob_LastFloor){
+                    glob_QueDirection = DIRN_UP;
+                }
+                else if (f < glob_LastFloor){
+                    glob_QueDirection = DIRN_DOWN;
+                }
+                else if (glob_LastFloor == f){
+                    if(glob_QueDirection == DIRN_DOWN){
+                        glob_QueDirection = DIRN_UP;
+                        return;
+                    }
+                    else{
+                        glob_QueDirection = DIRN_DOWN;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    return;
+}
+
 int checkOrderUnder(void){
     for (int f = 0; f < glob_LastFloor; f++){
         for (int b = 0; b < N_BUTTONS; b++){

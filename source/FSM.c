@@ -38,7 +38,7 @@ void STATE_doorOpen(void){
     elevio_doorOpenLamp(1);
     orderServed();
     time_t start = time(NULL);
-    while(time(NULL) - start < 3 && !elevio_stopButton() && !elevio_obstruction()){
+    while((time(NULL) - start < 3) && !elevio_stopButton() && !elevio_obstruction()){
         matrix();
     }
     if(elevio_stopButton()){
@@ -47,6 +47,7 @@ void STATE_doorOpen(void){
         return;
     }
     if(elevio_obstruction()){
+        matrix();
         testSlutt();
         return;
     }
