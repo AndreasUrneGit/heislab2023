@@ -14,7 +14,6 @@ void matrix(){
     //update of elevator direction after orders are served
     if(glob_State == FSM_wait){
         updateDirection();
-        glob_MotorDirection = glob_QueDirection;
     }
 
     if (glob_State == FSM_move && elevio_floorSensor() != -1){
@@ -59,11 +58,13 @@ void updateMatrixAndLights(void){
     return;
 }
 
-void updateDirection(){
+/* void updateDirection(){
     if (glob_QueDirection == DIRN_UP && checkOrderOver()){
+        glob_MotorDirection = glob_QueDirection;
         return;
     }
     else if (glob_QueDirection == DIRN_DOWN && checkOrderUnder()){
+        glob_MotorDirection = glob_QueDirection;
         return;
     }
 
@@ -81,22 +82,25 @@ void updateDirection(){
                 else if ((glob_LastFloor == floor) && (currentFloor == -1)){
                     if(glob_QueDirection == DIRN_DOWN){
                         glob_QueDirection = DIRN_UP;
-                        return;
                     }
                     else{
                         glob_QueDirection = DIRN_DOWN;
-                        return;
                     }
                 }
+                glob_MotorDirection = glob_QueDirection;
+                return;
             }
         }
     }
-    glob_QueDirection = DIRN_STOP;
+    if(currentFloor != -1){
+        glob_QueDirection = DIRN_STOP;
+        glob_MotorDirection = glob_QueDirection;
+    }
     
     return;
-}
+} */
 
-/* void updateDirection(){
+void updateDirection(){
     int currentFloor = elevio_floorSensor();
     if (currentFloor == -1){
         betweenFloors(currentFloor);
@@ -118,11 +122,13 @@ void updateDirection(){
                     else if (floor < glob_LastFloor){
                         glob_QueDirection = DIRN_DOWN;
                     }
+                    glob_MotorDirection = glob_QueDirection;
                     return;
                 }
             }
         }
     }
+    glob_MotorDirection = glob_QueDirection;
     return;
 }
 
@@ -139,18 +145,18 @@ void betweenFloors(int currentFloor){
                 else if (glob_LastFloor == f){
                     if(glob_QueDirection == DIRN_DOWN){
                         glob_QueDirection = DIRN_UP;
-                        return;
                     }
                     else{
                         glob_QueDirection = DIRN_DOWN;
-                        return;
                     }
                 }
+                glob_MotorDirection = glob_QueDirection;
+                return;
             }
         }
     }
     return;
-} */
+} 
 
 int checkOrderUnder(void){
     for (int f = 0; f < glob_LastFloor; f++){
