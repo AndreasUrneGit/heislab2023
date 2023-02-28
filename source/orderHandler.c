@@ -60,6 +60,43 @@ void updateMatrixAndLights(void){
 }
 
 void updateDirection(){
+    if (glob_QueDirection == DIRN_UP && checkOrderOver()){
+        return;
+    }
+    else if (glob_QueDirection == DIRN_DOWN && checkOrderUnder()){
+        return;
+    }
+
+    int currentFloor = elevio_floorSensor();
+
+    for (int floor = 0; floor < N_FLOORS; floor++){
+        for (int button = 0; button < N_BUTTONS; button++){
+            if (elevMatrix[floor][button] == 1){
+                if (floor > glob_LastFloor){
+                    glob_QueDirection = DIRN_UP;
+                }
+                else if (floor < glob_LastFloor){
+                    glob_QueDirection = DIRN_DOWN;
+                }
+                else if ((glob_LastFloor == floor) && (currentFloor == -1)){
+                    if(glob_QueDirection == DIRN_DOWN){
+                        glob_QueDirection = DIRN_UP;
+                        return;
+                    }
+                    else{
+                        glob_QueDirection = DIRN_DOWN;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    glob_QueDirection = DIRN_STOP;
+    
+    return;
+}
+
+/* void updateDirection(){
     int currentFloor = elevio_floorSensor();
     if (currentFloor == -1){
         betweenFloors(currentFloor);
@@ -113,7 +150,7 @@ void betweenFloors(int currentFloor){
         }
     }
     return;
-}
+} */
 
 int checkOrderUnder(void){
     for (int f = 0; f < glob_LastFloor; f++){

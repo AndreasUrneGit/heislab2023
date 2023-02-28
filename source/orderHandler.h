@@ -11,4 +11,4 @@ void updateDirection(void);
 void printMatrix(void); //debug function to print matrix
 int checkOrderUnder(void);
 int checkOrderOver(void);
-void betweenFloors(int);
+//void betweenFloors(int);
