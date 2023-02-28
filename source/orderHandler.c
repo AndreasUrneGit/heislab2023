@@ -110,11 +110,11 @@ void checkIfShallStop(void){
         return;
     }
     //last or argument is ment to catch when a pri order wishes to go oposit direction of current direction
-    else if ((glob_QueDirection == 1 && elevMatrix[currentFloor][0]) || !checkOrderOver()){
+    else if ((glob_QueDirection == 1 && elevMatrix[currentFloor][0]) || (glob_QueDirection == 1 && !checkOrderOver())){
         glob_MotorDirection = DIRN_STOP;
         return;
     }
-    else if ((glob_QueDirection == -1 && elevMatrix[currentFloor][1]) || !checkOrderUnder()){
+    else if ((glob_QueDirection == -1 && elevMatrix[currentFloor][1]) || (glob_QueDirection == -1 && !checkOrderUnder())){
         glob_MotorDirection = DIRN_STOP;
         return;
     }
