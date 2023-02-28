@@ -11,6 +11,12 @@ void matrix(){
     }
 
     updateMatrixAndLights();
+    //update of elevator direction after orders are served
+    if(glob_State == FSM_wait){
+        updateDirection();
+        glob_MotorDirection = glob_QueDirection;
+    }
+
     if (glob_State == FSM_move && elevio_floorSensor() != -1){
         checkIfShallStop();
     }
@@ -48,12 +54,6 @@ void updateMatrixAndLights(void){
         glob_LastFloor = currentFloor;
         elevio_floorIndicator(currentFloor);
     }
-
-    //update of elevator direction after orders are served
-    if(glob_State == FSM_wait){
-        updateDirection();
-        glob_MotorDirection = glob_QueDirection;
-    }
     return;
 }
 
@@ -82,8 +82,7 @@ void updateDirection(){
     return;
 }
 int checkOrderUnder(void){
-    for (int f = 0; f < glob_LastFloor; f++)
-    {
+    for (int f = 0; f < glob_LastFloor; f++){
         for (int b = 0; b < N_BUTTONS; b++){
             if(elevMatrix[f][b] == 1){
                 return 1;
@@ -92,9 +91,9 @@ int checkOrderUnder(void){
     }
     return 0;
 }
+
 int checkOrderOver(void){
-    for (int f = glob_LastFloor+1; f < N_FLOORS; f++)
-    {
+    for (int f = glob_LastFloor+1; f < N_FLOORS; f++){
         for (int b = 0; b < N_BUTTONS; b++){
             if(elevMatrix[f][b] == 1){
                 return 1;
