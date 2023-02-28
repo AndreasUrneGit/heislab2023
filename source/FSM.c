@@ -68,17 +68,16 @@ void STATE_stop(void){
 
     }
     elevio_stopLamp(0);
-    time_t start = time(NULL);
-    while(elevio_floorSensor() != -1 && !elevio_stopButton() && time(NULL) - start < 3){
-        matrix();
-    }
-    if(elevio_stopButton()){
+
+    if(elevio_floorSensor() != -1){
         testSlutt();
+        glob_State = FSM_doorOpen;
         return;
     }
+
     elevio_doorOpenLamp(0);
-    glob_State = FSM_wait;
     testSlutt();
+    glob_State = FSM_wait;
     return;
 }
 
