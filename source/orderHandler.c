@@ -9,13 +9,12 @@ void matrix(){
         stopBtnPressed();
         return;
     }
-
     updateMatrixAndLights();
     //update of elevator direction after orders are served
     if(glob_State == FSM_wait){
         updateDirection();
     }
-
+    //if on floor, check if we should stop
     if (glob_State == FSM_move && elevio_floorSensor() != -1){
         checkIfShallStop();
     }
@@ -23,6 +22,7 @@ void matrix(){
 }
 
 //in case stop button is pressed
+//can remove this one and call order served
 void stopBtnPressed(void){
     glob_MotorDirection = DIRN_STOP;
     //glob_QueDirection = DIRN_STOP;
