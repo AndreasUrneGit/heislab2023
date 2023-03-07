@@ -10,7 +10,9 @@ void STATE_wait(void){
         testSlutt();
         return;
     }
-    glob_State = FSM_move;
+    if (glob_State != FSM_doorOpen){
+        glob_State = FSM_move;
+    }
     testSlutt();
     return;
 }

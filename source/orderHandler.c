@@ -89,6 +89,8 @@ void updateDirection(){
                 }
                 else{ //order on same floor, so we want to wait and pick them up
                     glob_QueDirection = DIRN_STOP;
+                    glob_MotorDirection = DIRN_UP;
+                    glob_State = FSM_doorOpen;
                     return;
                 }
                 glob_MotorDirection = glob_QueDirection;
